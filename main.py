@@ -1,17 +1,6 @@
 import pygame
 
 
-# positions = [[
-#     ['wr', 'wkn', 'wb', 'wq', 'wk', 'wb2', 'wkn2', 'wr2'],
-#     ['wp1', 'wp2', 'wp3', 'wp4', 'wp5', 'wp6', 'wp7', 'wp8'],
-#     ['-', '-', '-', '-', '-', '-', '-', '-'],
-#     ['-', '-', '-', '-', '-', '-', '-', '-'],
-#     ['-', '-', '-', '-', '-', '-', '-', '-'],
-#     ['-', '-', '-', '-', '-', '-', '-', '-'],
-#     ['bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8'],
-#     ['br', 'bkn', 'bb', 'bq', 'bk', 'bb2', 'bkn2', 'br2']
-# ]]
-
 class Board:
     def __init__(self, width, height):
         self.width = width
@@ -22,27 +11,23 @@ class Board:
         self.top = 30
         self.cell_size = 100
 
-    def render(self, screen):
-        for x in range(self.height):
-            for y in range(self.width):
-                coord = (self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
-                pygame.draw.rect(screen, (255, 255, 255), coord, 2)
+    # def render(self, screen):
+    #     for x in range(self.height):
+    #         for y in range(self.width):
+    #             coord = (self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
+    #             pygame.draw.rect(screen, (255, 255, 255), coord, 2)
 
     def get_coord(self, coord):
         x, y = coord
         if (self.left <= x <= self.left + self.width * self.cell_size and
                 self.top <= y <= self.top + self.height * self.cell_size):
-            print((x - self.left) // self.cell_size,
-                  (y - self.top) // self.cell_size)
             return (x - self.left) // self.cell_size, (y - self.top) // self.cell_size
-        else:
-            print(None)
 
     def makeaboard(self):
         brd = pygame.image.load('data/board.png')
         cr = brd.get_rect(center=(width // 2, height // 2))
         screen.blit(brd, cr)
-        pygame.display.update()
+        # pygame.display.update()
 
 
 # class Piece:
@@ -288,7 +273,7 @@ class Knight:
 
 
 class Piece:
-    def __init__(self, piece_names, piece_coord, color1, path):
+    def __init__(self, piece_name, piece_coord, color1, path):
         global positions
         self.piece_names = {
             "pawn",
@@ -301,9 +286,68 @@ class Piece:
         self.piece_coord = piece_coord
         self.color1 = color1
         self.path = path
+        self.piece_name = piece_name
 
     def update_pos(self):
         pass
+
+    def can_move(self):
+        if self.color1 == 'white':
+            q = -1
+        else:
+            q = 1
+        if self.piece_name == 'knight':
+            # print(self.piece_coord)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 2)
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 2)
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 2)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 2)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 2)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 2)
+        elif self.piece_name == 'king':
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
+
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 1)
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 1)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 1)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1])
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1])
+        elif self.piece_name == 'rock':
+            for i in range(8):
+                self.drow_circle(self.piece_coord[0], i)
+                self.drow_circle(i, self.piece_coord[1])
+        elif self.piece_name == 'bishop':
+            for i in range(8):
+                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
+                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
+                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
+                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
+        elif self.piece_name == 'queen':
+            for i in range(8):
+                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
+                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
+                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
+                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
+                self.drow_circle(self.piece_coord[0], i)
+                self.drow_circle(i, self.piece_coord[1])
+        elif self.piece_name == 'king':
+            self.drow_circle(self.piece_coord[0], self.piece_coord[1] - 1)
+            self.drow_circle(self.piece_coord[0], self.piece_coord[1] + 1)
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1])
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1])
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 1)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
+            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 1)
+            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 1)
+        elif self.piece_name == 'pawn':
+            self.drow_circle(self.piece_coord[0], self.piece_coord[1] + q)
+            # print(self.piece_coord[0], self.piece_coord[1] + q)
+
+    def drow_circle(self, x, y):
+        # print(x, y, positions[y - 1][x - 1])
+        if 1 <= x <= 8 and 1 <= y <= 8 and positions[y - 1][x - 1] == '-':
+            pygame.draw.circle(screen, (100, 100, 100), (x * 100 - 20, y * 100 - 20), 20)
 
 
 w_pawn1 = Piece('pawn', (1, 7), 'white', 'data/white_pawn.png')
@@ -322,8 +366,8 @@ b_pawn5 = Piece('pawn', (5, 2), 'black', 'data/black_pawn.png')
 b_pawn6 = Piece('pawn', (6, 2), 'black', 'data/black_pawn.png')
 b_pawn7 = Piece('pawn', (7, 2), 'black', 'data/black_pawn.png')
 b_pawn8 = Piece('pawn', (8, 2), 'black', 'data/black_pawn.png')
-w_rock = Piece('rock', (8, 8), 'white', 'data/white_rock.png')
-w_rock2 = Piece('rock', (1, 8), 'white', 'data/white_rock.png')
+w_rock = Piece('rock', (1, 8), 'white', 'data/white_rock.png')
+w_rock2 = Piece('rock', (8, 8), 'white', 'data/white_rock.png')
 b_rock = Piece('rock', (8, 1), 'black', 'data/black_rock.png')
 b_rock2 = Piece('rock', (1, 1), 'black', 'data/black_rock.png')
 w_knight = Piece('knight', (2, 8), 'white', 'data/white_knight.png')
@@ -340,14 +384,14 @@ w_king = Piece('king', (5, 8), 'white', 'data/white_king.png')
 b_king = Piece('king', (5, 1), 'black', 'data/black_king.png')
 
 positions = [
-    [w_rock, w_knight, w_bishop, w_queen, w_king, w_bishop2, w_knight2, w_rock2],
-    [w_pawn1, w_pawn2, w_pawn3, w_pawn4, w_pawn5, w_pawn6, w_pawn7, w_pawn8],
-    ['-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-'],
+    [b_rock2, b_knight, b_bishop, b_queen, b_king, b_bishop2, b_knight2, b_rock],
     [b_pawn1, b_pawn2, b_pawn3, b_pawn4, b_pawn5, b_pawn6, b_pawn7, b_pawn8],
-    [b_rock, b_knight, b_bishop, b_queen, b_king, b_bishop2, b_knight2, b_rock2]
+    ['-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-'],
+    [w_pawn1, w_pawn2, w_pawn3, w_pawn4, w_pawn5, w_pawn6, w_pawn7, w_pawn8],
+    [w_rock, w_knight, w_bishop, w_queen, w_king, w_bishop2, w_knight2, w_rock2],
 ]
 
 
@@ -358,7 +402,7 @@ def ya_eblan():
                 continue
             piece = pygame.image.load(j.path)
             screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 30, (j.piece_coord[1] - 1) * 100 + 30))
-            pygame.display.update()
+            # pygame.display.update()
 
 
 if __name__ == '__main__':
@@ -377,9 +421,11 @@ if __name__ == '__main__':
                 # print(Board(width, height).get_coord(event.pos))
                 q, w = pygame.mouse.get_pos()
                 x, y = Board(width, height).get_coord(event.pos)
-                if w_knight in positions[x][y]:
-                    Knight('white').can_move(x, y, q, w)
-                pygame.draw.circle(screen, (100, 100, 100), (x, y - 100), 20)
+
+                # if w_knight == positions[x][y]:
+                positions[y][x].can_move()
+                # Knight('white').can_move(x, y, q, w)
+                # pygame.draw.circle(screen, (100, 100, 100), (x, y - 100), 20)
             if event.type == pygame.MOUSEBUTTONUP:
                 Board(1080, 1080).makeaboard()
         # pygame.display.flip()
@@ -397,5 +443,5 @@ if __name__ == '__main__':
         # Pawn('white', life=True)
         # Pawn('black', life=True)
         ya_eblan()
+        pygame.display.update()
     pygame.quit()
-
