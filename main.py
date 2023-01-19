@@ -20,15 +20,16 @@ class Board:
             return (x - self.left) // self.cell_size, (y - self.top) // self.cell_size
 
     def makeaboard(self):
-        brd = pygame.image.load('data/board.jpg')
+        brd = pygame.image.load('data/board.png')
         cr = brd.get_rect(center=(width // 2, height // 2))
         screen.blit(brd, cr)
         # pygame.display.update()
 
 
 class Piece:
-    def __init__(self, piece_name, piece_coord, color1, path):
+    def __init__(self, piece_name, piece_coord, color1, path, is_alive=True):
         global positions, pos
+        self.is_alive = is_alive
         self.piece_names = {
             "pawn",
             "rock",
@@ -43,20 +44,6 @@ class Piece:
         self.piece_name = piece_name
         self.cmove = []
 
-    def update_pos(self):
-        if self.piece_name == 'pawn':
-            positions[y][x] = '-'
-        if self.piece_name == 'knight':
-            positions[y][x] = '-'
-        if self.piece_name == 'bishop':
-            positions[y][x] = '-'
-        if self.piece_name == 'queen':
-            positions[y][x] = '-'
-        if self.piece_name == 'rock':
-            positions[y][x] = '-'
-        if self.piece_name == 'king':
-            positions[y][x] = '-'
-
     def can_move(self):
         if self.color1 == 'white':
             self.clr = -1
@@ -65,160 +52,315 @@ class Piece:
 
         if self.piece_name == 'knight':
             try:
-                if positions[self.piece_coord[0] - 1][self.piece_coord[1] + 2] == '-':  #
-                    self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 2)  #
-                if positions[self.piece_coord[0] - 1][self.piece_coord[1] - 2] == '-':  #
-                    self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 2)  #
-                if positions[self.piece_coord[0] + 1][self.piece_coord[1] - 2] == '-':  #
-                    self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 2)  #
-                if positions[self.piece_coord[0] + 1][self.piece_coord[1] + 2] == '-':  #
-                    self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 2)  #
-                if positions[self.piece_coord[0] - 2][self.piece_coord[1] - 1] == '-':  #
-                    self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1] - 1)  #
-                if positions[self.piece_coord[0] - 2][self.piece_coord[1] + 1] == '-':  #
-                    self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1] + 1)  #
-                if positions[self.piece_coord[0] + 2][self.piece_coord[1] - 1] == '-':
-                    self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1] - 1)
-                if positions[self.piece_coord[0] + 2][self.piece_coord[1] + 1] == '-':  #
-                    self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1] + 1)  #
+                self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1] - 1)  #
+            except Exception:
+                print('error')
+            try:
+
+                self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1] - 1)  #
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1] + 1)  #
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1] + 1)  #
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 2)  #
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 2)  #
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 2)
+            except Exception:
+                print('error')
+            try:
+                self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 2)  #
             except Exception:
                 print('error')
 
-        elif self.piece_name == 'king':
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
-
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 1)
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 1)
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 1)
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1])
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1])
         elif self.piece_name == 'rock':
             line_xm = 1
             line_xp = 1
             line_ym = 1
             line_yp = 1
             for i in range(1, 9):
-
                 try:
-                    if positions[self.piece_coord[0]][self.piece_coord[1] + i] == '-' and line_xm == 1:
-                        self.drow_circle(self.piece_coord[0], i)
-                    else:
+                    if positions[self.piece_coord[1]][self.piece_coord[0] - i] == '-' and line_xm == 1:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1])
+                    elif line_xm == 1:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1])
                         line_xm = 0
-                    if line_ym == 1 and positions[self.piece_coord[0] - i][self.piece_coord[1]] == '-':
-                        self.drow_circle(i, self.piece_coord[1])
-                    else:
+                except:
+                    pass
+                try:
+                    if line_ym == 1 and positions[self.piece_coord[1] - i][self.piece_coord[0]] == '-':
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] - i)
+                    elif line_ym == 1:
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] - i)
                         line_ym = 0
-                    if line_xp == 1 and positions[self.piece_coord[0] - i][self.piece_coord[1]] == '-':
-                        self.drow_circle(i, self.piece_coord[1])
-                    else:
+                except:
+                    pass
+                try:
+                    if line_xp == 1 and positions[self.piece_coord[1]][self.piece_coord[0] + i] == '-':
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1])
+                    elif line_xp == 1:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1])
                         line_xp = 0
-                    if line_yp == 1 and positions[self.piece_coord[0] - i][self.piece_coord[1]] == '-':
-                        self.drow_circle(i, self.piece_coord[1])
-                    else:
+                except:
+                    pass
+                try:
+                    if line_yp == 1 and positions[self.piece_coord[1] + i][self.piece_coord[0]] == '-':
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] + i)
+                    elif line_yp == 1:
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] + i)
                         line_yp = 0
                 except Exception:
-                    print('error')
+                    pass
 
         elif self.piece_name == 'bishop':
-            for i in range(1, 8):
-                if self.piece_coord[0] + i <= 8 and self.piece_coord[1] + i <= 8:
-                    if positions[self.piece_coord[0] + i][self.piece_coord[1] + i] == '-':
-                        pos.append((self.piece_coord[0] + i, self.piece_coord[1] + i))
+            for i in range(1, 9):
+                if self.piece_coord[1] + i <= 8 and self.piece_coord[0] + i <= 8:
+                    if positions[self.piece_coord[1] + i][self.piece_coord[0] + i] == '-':
                         self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
                     else:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
                         break
                 else:
                     break
-            for i in range(1, 8):
-                if self.piece_coord[0] - i <= 8 and self.piece_coord[1] - i <= 8:
-                    if positions[self.piece_coord[0] - i][self.piece_coord[1] - i - 1] == '-':
-                        pos.append((self.piece_coord[0] - i, self.piece_coord[1] - i))
+            for i in range(1, 9):
+                if self.piece_coord[1] - i <= 8 and self.piece_coord[0] - i <= 8:
+                    if positions[self.piece_coord[1] - i][self.piece_coord[0] - i] == '-':
                         self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
                     else:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
                         break
                 else:
                     break
 
-            for i in range(1, 8):
-                if self.piece_coord[0] - i <= 8 and self.piece_coord[1] + i <= 8:
-                    if positions[self.piece_coord[0] - i][self.piece_coord[1] + i] == '-':
-                        pos.append((self.piece_coord[0] - i, self.piece_coord[1] + i))
-                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
+            for i in range(1, 9):
+                if self.piece_coord[1] - i <= 8 and self.piece_coord[0] + i <= 8:
+                    if positions[self.piece_coord[1] - i][self.piece_coord[0] + i] == '-':
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
                     else:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
                         break
                 else:
                     break
-            for i in range(1, 8):
+            for i in range(1, 9):
                 # print(positions[self.piece_coord[0] + i - 1][self.piece_coord[1] - i - 1], positions[3][4])
-                if self.piece_coord[0] + i <= 8 and self.piece_coord[1] - i <= 8:
-                    if positions[self.piece_coord[0] + i][self.piece_coord[1] - i] == '-':
-                        pos.append((self.piece_coord[0] + i, self.piece_coord[1] - i))
-                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
+                if self.piece_coord[1] + i <= 8 and self.piece_coord[0] - i <= 8:
+                    if positions[self.piece_coord[1] + i][self.piece_coord[0] - i] == '-':
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
                     else:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
                         break
                 else:
                     break
 
         elif self.piece_name == 'queen':
-            for i in range(8):
-                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
-                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
-                self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
-                self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
-                self.drow_circle(self.piece_coord[0], i)
-                self.drow_circle(i, self.piece_coord[1])
+            line_xm = 1
+            line_xp = 1
+            line_ym = 1
+            line_yp = 1
+            for i in range(1, 9):
+                try:
+                    if positions[self.piece_coord[1]][self.piece_coord[0] - i] == '-' and line_xm == 1:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1])
+                    elif line_xm == 1:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1])
+                        line_xm = 0
+                except:
+                    pass
+                try:
+                    if line_ym == 1 and positions[self.piece_coord[1] - i][self.piece_coord[0]] == '-':
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] - i)
+                    elif line_ym == 1:
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] - i)
+                        line_ym = 0
+                except:
+                    pass
+                try:
+                    if line_xp == 1 and positions[self.piece_coord[1]][self.piece_coord[0] + i] == '-':
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1])
+                    elif line_xp == 1:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1])
+                        line_xp = 0
+                except:
+                    pass
+                try:
+                    if line_yp == 1 and positions[self.piece_coord[1] + i][self.piece_coord[0]] == '-':
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] + i)
+                    elif line_yp == 1:
+                        self.drow_circle(self.piece_coord[0], self.piece_coord[1] + i)
+                        line_yp = 0
+                except Exception:
+                    pass
+
+            for i in range(1, 9):
+                if self.piece_coord[1] + i <= 8 and self.piece_coord[0] + i <= 8:
+                    if positions[self.piece_coord[1] + i][self.piece_coord[0] + i] == '-':
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
+                    else:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] + i)
+                        break
+                else:
+                    break
+            for i in range(1, 9):
+                if self.piece_coord[1] - i <= 8 and self.piece_coord[0] - i <= 8:
+                    if positions[self.piece_coord[1] - i][self.piece_coord[0] - i] == '-':
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
+                    else:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] - i)
+                        break
+                else:
+                    break
+
+            for i in range(1, 9):
+                if self.piece_coord[1] - i <= 8 and self.piece_coord[0] + i <= 8:
+                    if positions[self.piece_coord[1] - i][self.piece_coord[0] + i] == '-':
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
+                    else:
+                        self.drow_circle(self.piece_coord[0] + i, self.piece_coord[1] - i)
+                        break
+                else:
+                    break
+            for i in range(1, 9):
+                # print(positions[self.piece_coord[0] + i - 1][self.piece_coord[1] - i - 1], positions[3][4])
+                if self.piece_coord[1] + i <= 8 and self.piece_coord[0] - i <= 8:
+                    if positions[self.piece_coord[1] + i][self.piece_coord[0] - i] == '-':
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
+                    else:
+                        self.drow_circle(self.piece_coord[0] - i, self.piece_coord[1] + i)
+                        break
+                else:
+                    break
+
+
         elif self.piece_name == 'king':
-            self.drow_circle(self.piece_coord[0], self.piece_coord[1] - 1)
-            self.drow_circle(self.piece_coord[0], self.piece_coord[1] + 1)
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1])
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1])
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 1)
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
-            self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 1)
-            self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 1)
+
+            a = []
+
+            print(self.piece_coord)
+
+            if self.piece_coord[1] > 1:
+                self.drow_circle(self.piece_coord[0], self.piece_coord[1] - 1)
+
+            if self.piece_coord[1] < 8:
+                self.drow_circle(self.piece_coord[0], self.piece_coord[1] + 1)
+
+            if self.piece_coord[0] < 8:
+                self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1])
+
+            if self.piece_coord[0] > 1:
+                self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1])
+
+            if self.piece_coord[1] < 8 and self.piece_coord[0] < 8:
+                self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] + 1)
+
+            if self.piece_coord[0] > 1 and self.piece_coord[1] < 8:
+                self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] + 1)
+
+            if self.piece_coord[0] > 1 and 1 < self.piece_coord[1] > 1:
+                self.drow_circle(self.piece_coord[0] - 1, self.piece_coord[1] - 1)
+
+            if self.piece_coord[0] < 8 and self.piece_coord[1] > 1:
+                self.drow_circle(self.piece_coord[0] + 1, self.piece_coord[1] - 1)
+            if self.clr == -1:
+
+                if positions[8][8] == w_rock2:
+
+                    for i in range(6, 8):
+                        if positions[8][i] == '-':
+                            a.append('-')
+                    if all(a) and len(a) == 2:
+                        self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1])
+
+                        w_rock.piece_coord = (6, 8)
+                        positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+
+                if positions[8][1] == w_rock:
+
+                    for i in range(2, 5):
+                        if positions[8][i] == '-':
+                            a.append('-')
+
+                    if all(a) and len(a) == 3:
+                        w_rock2.piece_coord = (4, 8)
+                        positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+                        self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1])
+            else:
+                a = []
+
+                if positions[1][8] == b_rock:
+                    print(3443)
+                    for i in range(6, 8):
+                        if positions[1][i] == '-':
+                            a.append('-')
+                    if all(a) and len(a) == 2:
+                        print(132)
+                        self.drow_circle(self.piece_coord[0] + 2, self.piece_coord[1])
+                        b_rock2.piece_coord = (6, 1)
+                        positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+
+                if positions[1][2] == b_rock2:
+
+                    for i in range(2, 5):
+                        if positions[1][i] == '-':
+                            a.append('-')
+                    print(a)
+                    if all(a) and len(a) == 3:
+                        print(112)
+                        self.drow_circle(self.piece_coord[0] - 2, self.piece_coord[1])
+
+
         elif self.piece_name == 'pawn':
-            if positions[self.piece_coord[1] + self.clr][self.piece_coord[0]] == '-':
-                self.drow_circle(self.piece_coord[0], self.piece_coord[1] + self.clr)
-                pos.append((self.piece_coord[0], self.piece_coord[1]+ self.clr))
-            # if positions[self.piece_coord[0]][
-            #     self.piece_coord[1] + self.clr] != '-':  # leva moжно есть права нет
-            #     self.drow_circle(self.piece_coord[0], self.piece_coord[1] + self.clr)
-            #     pos.append((self.piece_coord[0], self.piece_coord[1]))
-            # if positions[self.piece_coord[0]][self.piece_coord[1] + q - 1] != '-':
-            #     self.drow_circle(self.piece_coord[0], self.piece_coord[1] + q)
+            self.drow_circle(self.piece_coord[0], self.piece_coord[1] + self.clr)
+            if self.piece_coord[1] == 2 and self.color1 == 'black':
+                self.drow_circle(self.piece_coord[0], self.piece_coord[1] + 2 * self.clr)
+            if self.piece_coord[1] == 7 and self.color1 == 'white':
+                self.drow_circle(self.piece_coord[0], self.piece_coord[1] + 2 * self.clr)
 
     def drow_circle(self, x, y):
         # print(x, y, positions[y - 1][x - 1])
         if 1 <= x <= 8 and 1 <= y <= 8 and positions[y][x] == '-':
+            pos.append((x, y))
             pygame.draw.circle(screen, (100, 100, 100), (x * 100 - 20, y * 100 - 20), 20)
+        if positions[y][x] != '-' and positions[y][x].color1 != self.color1 and self.piece_name != 'pawn':
+            pos.append((x, y))
+            pygame.draw.circle(screen, (255, 0, 0), (x * 100 - 20, y * 100 - 20), 20)
+        if self.piece_name == 'pawn':
+            if positions[self.piece_coord[1] + self.clr][self.piece_coord[0] + 1] != '-' and \
+                    positions[self.piece_coord[1] + self.clr][self.piece_coord[0] + 1].color1 != self.color1:
+                pos.append((self.piece_coord[0] + 1, self.piece_coord[1] + self.clr))
+                pygame.draw.circle(screen, (255, 0, 0),
+                                   ((self.piece_coord[0] + 1) * 100 - 20, (self.piece_coord[1] + self.clr) * 100 - 20),
+                                   20)
+            if positions[self.piece_coord[1] + self.clr][self.piece_coord[0] - 1] != '-' and \
+                    positions[self.piece_coord[1] + self.clr][self.piece_coord[0] - 1].color1 != self.color1:
+                pos.append((self.piece_coord[0] - 1, self.piece_coord[1] + self.clr))
+                pygame.draw.circle(screen, (255, 0, 0),
+                                   ((self.piece_coord[0] - 1) * 100 - 20, (self.piece_coord[1] + self.clr) * 100 - 20),
+                                   20)
 
     def move(self, x1, y1):
-        print((x1, y1), pos)
+        global chei_hod
         if (x1, y1) in pos:
-            if self.piece_name == 'pawn':
-
-                if self.clr == -1:
-
-                    brd = pygame.image.load('data/white_pawn.png')
-                    print(234234234)
-
-                    self.piece_coord = x1, y1
-                else:
-                    brd = pygame.image.load('data/black_pawn.png')
-
-                    self.piece_coord = x1, y1
-
-                if self.piece_name == 'knight':
-                    pass
-                if self.piece_name == 'king':
-                    pass
-                if self.piece_name == 'bishop':
-                    pass
-                if self.piece_name == 'rock':
-                    pass
-                if self.piece_name == 'queen':
-                    pass
+            if positions[y1][x1] != '-':
+                positions[y1][x1].piece_coord = (0, 0)
+            positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+            self.piece_coord = (x1, y1)
+        else:
+            if chei_hod == 'white':
+                chei_hod = 'black'
+            else:
+                chei_hod = 'white'
 
 
 w_pawn1 = Piece('pawn', (2, 6), 'white', 'data/white_pawn.png')
@@ -242,10 +384,10 @@ w_rock2 = Piece('rock', (8, 8), 'white', 'data/white_rock.png')
 b_rock = Piece('rock', (8, 1), 'black', 'data/black_rock.png')
 b_rock2 = Piece('rock', (1, 1), 'black', 'data/black_rock.png')
 w_knight = Piece('knight', (2, 8), 'white', 'data/white_knight.png')
-w_knight2 = Piece('knight', (4, 4), 'white', 'data/white_knight.png')
+w_knight2 = Piece('knight', (4, 5), 'white', 'data/white_knight.png')
 b_knight = Piece('knight', (2, 1), 'black', 'data/black_knight.png')
 b_knight2 = Piece('knight', (7, 1), 'black', 'data/black_knight.png')
-w_bishop = Piece('bishop', (4, 5), 'white', 'data/white_bishop.png')
+w_bishop = Piece('bishop', (4, 4), 'white', 'data/white_bishop.png')
 w_bishop2 = Piece('bishop', (6, 8), 'white', 'data/white_bishop.png')
 b_bishop = Piece('bishop', (3, 1), 'black', 'data/black_bishop.png')
 b_bishop2 = Piece('bishop', (6, 1), 'black', 'data/black_bishop.png')
@@ -278,12 +420,13 @@ def ya_eblan():
         positions[i.piece_coord[1]][i.piece_coord[0]] = i
     for i in positions:
         for j in i:
-
-            if j != '-':
+            if j != '-' and j.is_alive:
                 piece = pygame.image.load(j.path)
                 screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 30, (j.piece_coord[1] - 1) * 100 + 30))
 
 
+chei_hod = 'white'
+flag = 0
 if __name__ == '__main__':
     pygame.init()
     size = width, height = 860, 860
@@ -295,31 +438,42 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # print(pygame.mouse.get_pos())
-                # print(Board(width, height).get_coord(event.pos))
                 q, w = pygame.mouse.get_pos()
                 x, y = Board(width, height).get_coord(event.pos)
+                x1, y1 = Board(width, height).get_coord(event.pos)
                 x += 1
                 y += 1
-                # if w_knight == positions[x][y]:
-                if positions[y][x] != '-':
+                if positions[y][x] != '-' and positions[y][x].color1 == chei_hod:
+                    flag = 1
                     positions[y][x].can_move()
 
-                    print(x, y, positions[y][x])
-                # Knight('white').can_move(x, y, q, w)
-                # pygame.draw.circle(screen, (100, 100, 100), (x, y - 100), 20)
             if event.type == pygame.MOUSEBUTTONUP:
                 q, w = pygame.mouse.get_pos()
                 x1, y1 = Board(width, height).get_coord(event.pos)
                 x1 += 1
                 y1 += 1
-                if positions[y][x] != '-':
-                    positions[y][x].move(x1, y1)
-                    print(112)
-                    pos = []
+                if positions[y][x] != '-' and positions[y][x].color1 == chei_hod:
+                    if y1 == y and x1 == x:
+                        pass
+                    else:
+                        positions[y][x].move(x1, y1)
+                        if chei_hod == 'white':
+                            chei_hod = 'black'
+                        else:
+                            chei_hod = 'white'
+                        pos = []
+                    flag = 0
                 Board(1080, 1080).makeaboard()
 
-                pygame.draw.circle(screen, (0, 0, 255), event.pos, 20)
+            if flag == 1:
+                try:
+                    Board(1080, 1080).makeaboard()
+                    positions[y][x].can_move()
+                    piece = pygame.image.load(positions[y][x].path)
+                    screen.blit(piece, (event.pos[0] - 50, event.pos[1] - 50))
+                except:
+                    pass
+
         ya_eblan()
         pygame.display.update()
     pygame.quit()
