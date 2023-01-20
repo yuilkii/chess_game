@@ -477,3 +477,6 @@ if __name__ == '__main__':
         ya_eblan()
         pygame.display.update()
     pygame.quit()
+
+    
+    print("СОСИТЕ ЛОХИ")
