@@ -10,9 +10,9 @@ class MainMenu:
         self.height = height
 
     def makeamenu(self):
-        brd = pygame.image.load('data/back.png')
-        cr = brd.get_rect(center=(width // 2, height // 2))
-        screen.blit(brd, cr)
+        asf = pygame.image.load('data/back1.png')
+        af = asf.get_rect(center=(width // 2, height // 2))
+        screen.blit(asf, af)
 
 
 class Board:
@@ -421,7 +421,7 @@ def ya_eblan():
         for j in i:
             if j != '-' and j.is_alive:
                 piece = pygame.image.load(j.path)
-                screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 30, (j.piece_coord[1] - 1) * 100 + 30))
+                screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 350, (j.piece_coord[1] - 1) * 100 + 150))
 
 
 def game_over():
@@ -436,14 +436,24 @@ if __name__ == '__main__':
     size = width, height = 860, 860
     screen = pygame.display.set_mode(size)
     running = True
-    Board(1080, 1080).makeaboard()
+    # Board(1080, 1080).makeaboard()
+    x, y = 0, 0
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if acttiveWindoow == 'Menu':
-                MainMenu(width, height)
+                MainMenu(width, height).makeamenu()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    f, k = event.pos
+                    print(f, k)
+                    if 250 < f < 580 and 360 < k < 480:
+                        print(f, k)
+                        acttiveWindoow = ''
+                        # asf = pygame.transform.scale(asf, (0, 0))
+                        Board(1080, 1080).makeaboard()
+                        ya_eblan()
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     q, w = pygame.mouse.get_pos()
@@ -454,7 +464,6 @@ if __name__ == '__main__':
                     if positions[y][x] != '-' and positions[y][x].color1 == chei_hod:
                         flag = 1
                         positions[y][x].can_move()
-
                 if event.type == pygame.MOUSEBUTTONUP:
                     game_over()
                     q, w = pygame.mouse.get_pos()
@@ -483,6 +492,6 @@ if __name__ == '__main__':
                     except:
                         pass
 
-            ya_eblan()
+                ya_eblan()
         pygame.display.update()
     pygame.quit()
