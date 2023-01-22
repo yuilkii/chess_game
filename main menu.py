@@ -1,29 +1,61 @@
-import pygame
+import pygame as pg
 
 
-class MainMenu:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+def main():
+    screen = pg.display.set_mode((640, 480))
+    font = pg.font.Font(None, 32)
+    clock = pg.time.Clock()
+    input_box = pg.Rect(100, 100, 140, 32)
+    color_inactive = pg.Color('blue')
+    color_active = pg.Color('red')
+    color = color_inactive
+    active = False
+    text = ''
+    done = False
+    pos = []
 
-    def makeamenu(self):
-        brd = pygame.image.load('data/back.png')
-        cr = brd.get_rect(center=(width // 2, height // 2))
-        screen.blit(brd, cr)
+    while not done:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                done = True
+            if event.type == pg.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current color of the input box.
+                color = color_active if active else color_inactive
+            if event.type == pg.KEYDOWN:
+                if active:
+                    if event.key == pg.K_RETURN:
+                        # print(text)
+                        pos.append(text)
+                        print(pos)
+                        pos = []
+                        text = ''
+                    elif event.key == pg.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
+        screen.fill((30, 30, 30))
+        # Render the current text.
+        txt_surface = font.render(text, True, color)
+        # Resize the box if the text is too long.
+        width = max(200, txt_surface.get_width()+10)
+        input_box.w = width
+        # Blit the text.
+        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+        # Blit the input_box rect.
+        pg.draw.rect(screen, color, input_box, 2)
+
+        pg.display.flip()
+        clock.tick(30)
 
 
 if __name__ == '__main__':
-    pygame.init()
-    size = width, height = 1500, 1100
-    screen = pygame.display.set_mode(size)
-    running = True
-    MainMenu(1600, 1080).makeamenu()
-    pygame.display.update()
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                print(pygame.mouse.get_pos())
-            # 390x520:1110x720
-    pygame.quit()
+    pg.init()
+    main()
+    pg.quit()

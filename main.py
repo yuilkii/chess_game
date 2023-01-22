@@ -1,7 +1,74 @@
 import pygame
+import sqlite3
 
 pos = []
 acttiveWindoow = 'Menu'
+import sqlite3
+
+"""создаём таблицу в sqlite3"""
+
+conn = sqlite3.connect('server.db')
+sql = conn.cursor()
+
+sql.execute("""CREATE TABLE IF NOT EXISTS users (
+    login TEXT,
+    password TEXT,
+    rating INT
+)""")
+
+conn.commit()
+player1 = []
+player2 = []
+
+
+def main():
+    screen = pygame.display.set_mode((640, 480))
+    font = pygame.font.Font(None, 32)
+    clock = pygame.time.Clock()
+    input_box = pygame.Rect(100, 100, 140, 32)
+    color_inactive = pygame.Color('lightskyblue3')
+    color_active = pygame.Color('dodgerblue2')
+    color = color_inactive
+    active = False
+    text = ''
+    done = False
+
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current color of the input box.
+                color = color_active if active else color_inactive
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        print(text)
+                        text = ''
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
+        screen.fill((30, 30, 30))
+        # Render the current text.
+        txt_surface = font.render(text, True, color)
+        # Resize the box if the text is too long.
+        width = max(200, txt_surface.get_width() + 10)
+        input_box.w = width
+        # Blit the text.
+        screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+        # Blit the input_box rect.
+        pygame.draw.rect(screen, color, input_box, 2)
+
+        pygame.display.flip()
+        clock.tick(30)
 
 
 class MainMenu:
@@ -10,7 +77,74 @@ class MainMenu:
         self.height = height
 
     def makeamenu(self):
-        asf = pygame.image.load('data/back1.png')
+        asf = pygame.image.load('data/1111.png')
+        af = asf.get_rect(center=(width // 2, height // 2))
+        screen.blit(asf, af)
+
+
+class Prof:
+    global player1, player2
+
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def makeaprofile(self):
+        asf = pygame.image.load('data/3333.jpg')
+        af = asf.get_rect(center=(width // 2, height // 2))
+        screen.blit(asf, af)
+
+    # def reg(self):
+    #     bd = sql.execute(f"SELECT login FROM users").fetchall()
+    #     if // == 1:
+    #             if player1 not in bd:
+    #                 sql.execute("INSERT INTO users VALUES (?, ?, ?)",  ###################################
+    #                             (player1[0], player1[1], 0))
+    #                 conn.commit()
+    #             else:
+    #                 pass  # name already used
+    #         else:
+    #             pass
+    #     elif // == 2:
+    #         if player2 not in bd:
+    #             sql.execute("INSERT INTO users VALUES (?, ?, ?)",  ###################################
+    #                         (player2[0], player2[1], 0))
+    #             conn.commit()
+    #         else:
+    #             pass  # name already used
+    #     else:
+    #         pass
+
+    def log_1(self):
+        bd = sql.execute(f"SELECT login FROM users").fetchall()
+
+        pl1_pasw = sql.execute(f"SELECT password FROM users WHERE login = '{player1[0]}'")
+        if player1[0] in bd:
+            if pl1_pasw == player1[1]:
+                return 1
+            return 0
+        else:
+            return 0
+
+    def log_2(self):
+        bd = sql.execute(f"SELECT login FROM users").fetchall()
+
+        pl2_pasw = sql.execute(f"SELECT password FROM users WHERE login = '{player2[0]}'")
+        if player2[0] in bd:
+            if pl2_pasw == player2[1]:
+                return 1
+            return 0
+        else:
+            return 0
+
+
+class End:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def makeaend(self):
+        asf = pygame.image.load('data/endgame.png')
         af = asf.get_rect(center=(width // 2, height // 2))
         screen.blit(asf, af)
 
@@ -326,6 +460,7 @@ class Piece:
                                        ((self.piece_coord[0] + 1) * 100 - 20,
                                         (self.piece_coord[1] + self.clr) * 100 - 20),
                                        20)
+
             if self.piece_coord[0] > 1:
                 if positions[self.piece_coord[1] + self.clr][self.piece_coord[0] - 1] != '-' and \
                         positions[self.piece_coord[1] + self.clr][self.piece_coord[0] - 1].color1 != self.color1:
@@ -338,18 +473,19 @@ class Piece:
     def move(self, x1, y1):
         global chei_hod
         if (x1, y1) in pos:
-            if self.rak == 1:
-                w_rock2.piece_coord = (6, 8)
-                positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
-            elif self.rak == 2:
-                positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
-                w_rock.piece_coord = (4, 8)
-            elif self.rak == 3:
-                b_rock.piece_coord = (6, 1)
-                positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
-            elif self.rak == 4:
-                b_rock2.piece_coord = (4, 1)
-                positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+            if x1 == self.piece_coord[0] + 2 or x1 == self.piece_coord[0] - 2:
+                if self.rak == 1:
+                    w_rock2.piece_coord = (6, 8)
+                    positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+                elif self.rak == 2:
+                    positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+                    w_rock.piece_coord = (4, 8)
+                elif self.rak == 3:
+                    b_rock.piece_coord = (6, 1)
+                    positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
+                elif self.rak == 4:
+                    b_rock2.piece_coord = (4, 1)
+                    positions[self.piece_coord[1]][self.piece_coord[0]] = '-'
 
             if positions[y1][x1] != '-':
                 positions[y1][x1].piece_coord = (0, 0)
@@ -421,12 +557,31 @@ def ya_eblan():
         for j in i:
             if j != '-' and j.is_alive:
                 piece = pygame.image.load(j.path)
-                screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 350, (j.piece_coord[1] - 1) * 100 + 150))
+                screen.blit(piece, ((j.piece_coord[0] - 1) * 100 + 30, (j.piece_coord[1] - 1) * 100 + 30))
 
 
 def game_over():
-    if (0, 0) == w_king.piece_coord or b_king.piece_coord == (0, 0):
-        print(1)
+    # rat1 = sql.execute(f"SELECT rating FROM users WHERE login = '{player1}'")
+    # rat2 = sql.execute(f"SELECT login rating users WHERE login = '{player2}'")
+    if (0, 0) == w_king.piece_coord:
+        # if Prof.log1 == 1:
+        #     sql.execute(
+        #         f"UPDATE users SET rating = {rat1 + 30} WHERE login = '{player1}'")
+        # if Prof.log2 == 1:
+        #     sql.execute(
+        #         f"UPDATE users SET rating = {rat2 - 30} WHERE login = '{player2}'")
+        # conn.commit()
+        return 1
+    elif b_king.piece_coord == (0, 0):
+        # if Prof.log2 == 1:
+        #     sql.execute(
+        #         f"UPDATE users SET rating = {rat2 + 30} WHERE login = '{player2}'")
+        # if Prof.log1 == 1:
+        #     sql.execute(
+        #         f"UPDATE users SET rating = {rat1 - 30} WHERE login = '{player1}'")
+        #     conn.commit()
+        return 2
+    return 0
 
 
 chei_hod = 'white'
@@ -438,22 +593,37 @@ if __name__ == '__main__':
     running = True
     # Board(1080, 1080).makeaboard()
     x, y = 0, 0
-
+    a = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if game_over() == 1 or game_over() == 2:
+                acttiveWindoow = 'endgame'
+                End(width, height).makeaend()
             if acttiveWindoow == 'Menu':
                 MainMenu(width, height).makeamenu()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     f, k = event.pos
                     print(f, k)
-                    if 250 < f < 580 and 360 < k < 480:
+                    if 260 < f < 600 and 380 < k < 480:
                         print(f, k)
                         acttiveWindoow = ''
                         # asf = pygame.transform.scale(asf, (0, 0))
                         Board(1080, 1080).makeaboard()
                         ya_eblan()
+                    elif 540 < f < 810 and 50 < k < 120:
+                        # Prof(width, height).makeaprofile()
+                        main()
+                        acttiveWindoow = ''
+            elif acttiveWindoow == 'endgame':
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    f, k = event.pos
+                    print(f, k)
+                    if 200 < f < 660 and 360 < k < 500:
+                        print(1)
+                        acttiveWindoow = 'Menu'
+                        MainMenu(width, height).makeamenu()
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     q, w = pygame.mouse.get_pos()
