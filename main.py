@@ -20,54 +20,83 @@ conn.commit()
 player1 = []
 player2 = []
 
+import pygame as pg
+
+pg.init()
+screen = pg.display.set_mode((640, 480))
+COLOR_INACTIVE = pg.Color('lightskyblue3')
+COLOR_ACTIVE = pg.Color('dodgerblue2')
+FONT = pg.font.Font(None, 32)
+
+
+class InputBox:
+
+    def __init__(self, x, y, w, h, text=''):
+        self.rect = pg.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.txt_surface = FONT.render(text, True, self.color)
+        self.active = False
+
+    def handle_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pg.KEYDOWN:
+            if self.active:
+                print()
+                if event.key == pg.K_RETURN:
+                    print(self.text)
+                    player1.append(self.text)
+                    print(player1)
+                    self.text = ''
+                elif event.key == pg.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = FONT.render(self.text, True, self.color)
+
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(200, self.txt_surface.get_width() + 10)
+        self.rect.w = width
+
+    def draw(self, screen):
+        # Blit the text.
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        # Blit the rect.
+        pg.draw.rect(screen, self.color, self.rect, 2)
+
 
 def main():
-    screen = pygame.display.set_mode((640, 480))
-    font = pygame.font.Font(None, 32)
-    clock = pygame.time.Clock()
-    input_box = pygame.Rect(100, 100, 140, 32)
-    color_inactive = pygame.Color('lightskyblue3')
-    color_active = pygame.Color('dodgerblue2')
-    color = color_inactive
-    active = False
-    text = ''
+    clock = pg.time.Clock()
+    input_box1 = InputBox(100, 100, 140, 32)
+    input_box2 = InputBox(100, 300, 140, 32)
+    input_boxes = [input_box1, input_box2]
     done = False
 
     while not done:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 done = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # If the user clicked on the input_box rect.
-                if input_box.collidepoint(event.pos):
-                    # Toggle the active variable.
-                    active = not active
-                else:
-                    active = False
-                # Change the current color of the input box.
-                color = color_active if active else color_inactive
-            if event.type == pygame.KEYDOWN:
-                if active:
-                    if event.key == pygame.K_RETURN:
-                        print(text)
-                        text = ''
-                    elif event.key == pygame.K_BACKSPACE:
-                        text = text[:-1]
-                    else:
-                        text += event.unicode
+            for box in input_boxes:
+                box.handle_event(event)
+
+        for box in input_boxes:
+            box.update()
 
         screen.fill((30, 30, 30))
-        # Render the current text.
-        txt_surface = font.render(text, True, color)
-        # Resize the box if the text is too long.
-        width = max(200, txt_surface.get_width() + 10)
-        input_box.w = width
-        # Blit the text.
-        screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
-        # Blit the input_box rect.
-        pygame.draw.rect(screen, color, input_box, 2)
+        for box in input_boxes:
+            box.draw(screen)
 
-        pygame.display.flip()
+        pg.display.flip()
         clock.tick(30)
 
 
@@ -586,6 +615,9 @@ def game_over():
 
 chei_hod = 'white'
 flag = 0
+a = 0
+b = 0
+c = 0
 if __name__ == '__main__':
     pygame.init()
     size = width, height = 860, 860
@@ -593,37 +625,91 @@ if __name__ == '__main__':
     running = True
     # Board(1080, 1080).makeaboard()
     x, y = 0, 0
-    a = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if game_over() == 1 or game_over() == 2:
+            if game_over() == 1 or game_over() == 2 and acttiveWindoow == '' and c == 0:
+                c = 1
                 acttiveWindoow = 'endgame'
                 End(width, height).makeaend()
-            if acttiveWindoow == 'Menu':
-                MainMenu(width, height).makeamenu()
+            if acttiveWindoow == 'endgame':
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     f, k = event.pos
-                    print(f, k)
-                    if 260 < f < 600 and 380 < k < 480:
-                        print(f, k)
+                    if 200 < f < 660 and 360 < k < 500:
+                        acttiveWindoow = 'Menu'
+                        c = 0
+                        a = 1
+            elif acttiveWindoow == 'Menu':  # меню
+                MainMenu(width, height).makeamenu()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    j, l = event.pos
+                    if 260 < j < 600 and 380 < l < 480:
                         acttiveWindoow = ''
                         # asf = pygame.transform.scale(asf, (0, 0))
-                        Board(1080, 1080).makeaboard()
-                        ya_eblan()
-                    elif 540 < f < 810 and 50 < k < 120:
+                        if a == 0:
+                            Board(1080, 1080).makeaboard()
+                            ya_eblan()
+                            acttiveWindoow = ''
+                        else:
+                            print(213123131, a)
+                            w_pawn1 = Piece('pawn', (1, 7), 'white', 'data/white_pawn.png')
+                            w_pawn2 = Piece('pawn', (2, 7), 'white', 'data/white_pawn.png')
+                            w_pawn3 = Piece('pawn', (3, 7), 'white', 'data/white_pawn.png')
+                            w_pawn4 = Piece('pawn', (4, 7), 'white', 'data/white_pawn.png')
+                            w_pawn5 = Piece('pawn', (5, 7), 'white', 'data/white_pawn.png')
+                            w_pawn6 = Piece('pawn', (6, 7), 'white', 'data/white_pawn.png')
+                            w_pawn7 = Piece('pawn', (7, 7), 'white', 'data/white_pawn.png')
+                            w_pawn8 = Piece('pawn', (8, 7), 'white', 'data/white_pawn.png')
+                            b_pawn1 = Piece('pawn', (1, 2), 'black', 'data/black_pawn.png')
+                            b_pawn2 = Piece('pawn', (2, 2), 'black', 'data/black_pawn.png')
+                            b_pawn3 = Piece('pawn', (3, 2), 'black', 'data/black_pawn.png')
+                            b_pawn4 = Piece('pawn', (4, 2), 'black', 'data/black_pawn.png')
+                            b_pawn5 = Piece('pawn', (5, 2), 'black', 'data/black_pawn.png')
+                            b_pawn6 = Piece('pawn', (6, 2), 'black', 'data/black_pawn.png')
+                            b_pawn7 = Piece('pawn', (7, 2), 'black', 'data/black_pawn.png')
+                            b_pawn8 = Piece('pawn', (8, 2), 'black', 'data/black_pawn.png')
+                            w_rock = Piece('rock', (1, 8), 'white', 'data/white_rock.png')
+                            w_rock2 = Piece('rock', (8, 8), 'white', 'data/white_rock.png')
+                            b_rock = Piece('rock', (8, 1), 'black', 'data/black_rock.png')
+                            b_rock2 = Piece('rock', (1, 1), 'black', 'data/black_rock.png')
+                            w_knight = Piece('knight', (2, 8), 'white', 'data/white_knight.png')
+                            w_knight2 = Piece('knight', (7, 8), 'white', 'data/white_knight.png')
+                            b_knight = Piece('knight', (2, 1), 'black', 'data/black_knight.png')
+                            b_knight2 = Piece('knight', (7, 1), 'black', 'data/black_knight.png')
+                            w_bishop = Piece('bishop', (3, 8), 'white', 'data/white_bishop.png')
+                            w_bishop2 = Piece('bishop', (6, 8), 'white', 'data/white_bishop.png')
+                            b_bishop = Piece('bishop', (3, 1), 'black', 'data/black_bishop.png')
+                            b_bishop2 = Piece('bishop', (6, 1), 'black', 'data/black_bishop.png')
+                            w_queen = Piece('queen', (4, 8), 'white', 'data/white_queen.png')
+                            b_queen = Piece('queen', (4, 1), 'black', 'data/black_queen.png')
+                            w_king = Piece('king', (5, 8), 'white', 'data/white_king.png')
+                            b_king = Piece('king', (5, 1), 'black', 'data/black_king.png')
+                            positions = [
+                                ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                                ['-', b_rock2, b_knight, b_bishop, b_queen, b_king, b_bishop2, b_knight2, b_rock],
+                                ['-', b_pawn1, b_pawn2, b_pawn3, b_pawn4, b_pawn5, b_pawn6, b_pawn7, b_pawn8],
+                                ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                                ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                                ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                                ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
+                                ['-', w_pawn1, w_pawn2, w_pawn3, w_pawn4, w_pawn5, w_pawn6, w_pawn7, w_pawn8],
+                                ['-', w_rock, w_knight, w_bishop, w_queen, w_king, w_bishop2, w_knight2, w_rock2],
+                            ]
+                            pices = [b_rock2, b_knight, b_bishop, b_queen, b_king, b_bishop2, b_knight2, b_rock,
+                                     b_pawn1, b_pawn2, b_pawn3, b_pawn4, b_pawn5, b_pawn6, b_pawn7, b_pawn8,
+                                     w_knight2, w_bishop,
+                                     w_pawn1, w_pawn2, w_pawn3, w_pawn4, w_pawn5, w_pawn6, w_pawn7, w_pawn8,
+                                     w_rock, w_knight, w_queen, w_king, w_bishop2, w_rock2]
+                            a = 0
+                            chei_hod = 'white'
+                            Board(1080, 1080).makeaboard()
+                            ya_eblan()
+                            acttiveWindoow = ''
+                    elif 540 < j < 810 and 50 < l < 120:
                         # Prof(width, height).makeaprofile()
                         main()
                         acttiveWindoow = ''
-            elif acttiveWindoow == 'endgame':
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    f, k = event.pos
-                    print(f, k)
-                    if 200 < f < 660 and 360 < k < 500:
-                        print(1)
-                        acttiveWindoow = 'Menu'
-                        MainMenu(width, height).makeamenu()
             else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     q, w = pygame.mouse.get_pos()
@@ -652,7 +738,6 @@ if __name__ == '__main__':
                             pos = []
                         flag = 0
                     Board(1080, 1080).makeaboard()
-
                 if flag == 1:
                     try:
                         Board(1080, 1080).makeaboard()
@@ -661,7 +746,7 @@ if __name__ == '__main__':
                         screen.blit(piece, (event.pos[0] - 50, event.pos[1] - 50))
                     except:
                         pass
-
+            if a != 1 and acttiveWindoow != 'Menu' and acttiveWindoow != 'endgame':
                 ya_eblan()
         pygame.display.update()
     pygame.quit()
