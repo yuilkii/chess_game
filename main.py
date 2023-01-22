@@ -106,7 +106,7 @@ class MainMenu:
         self.height = height
 
     def makeamenu(self):
-        asf = pygame.image.load('data/1111.png')
+        asf = pygame.image.load('data/start_game.png')
         af = asf.get_rect(center=(width // 2, height // 2))
         screen.blit(asf, af)
 
@@ -119,7 +119,7 @@ class Prof:
         self.height = height
 
     def makeaprofile(self):
-        asf = pygame.image.load('data/3333.jpg')
+        asf = pygame.image.load('data/profile.png')
         af = asf.get_rect(center=(width // 2, height // 2))
         screen.blit(asf, af)
 
