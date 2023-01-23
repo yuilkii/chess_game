@@ -697,7 +697,6 @@ if __name__ == '__main__':
     # Board(1080, 1080).makeaboard()
     x, y = 0, 0
     while running:
-        print(player1, player2)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -706,7 +705,6 @@ if __name__ == '__main__':
                 acttiveWindoow = 'endgame'
                 End(width, height).makeaend()
             if acttiveWindoow == 'prof':
-                print(213)
                 base_font = pygame.font.Font(None, 32)
 
                 # if event.type == pygame.MOUSEBUTTONDOWN:
@@ -758,7 +756,6 @@ if __name__ == '__main__':
                             pos_and()
                             acttiveWindoow = ''
                         else:
-                            print(213123131, a)
                             w_pawn1 = Piece('pawn', (1, 7), 'white', 'data/white_pawn.png')
                             w_pawn2 = Piece('pawn', (2, 7), 'white', 'data/white_pawn.png')
                             w_pawn3 = Piece('pawn', (3, 7), 'white', 'data/white_pawn.png')
