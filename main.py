@@ -704,7 +704,7 @@ if __name__ == '__main__':
                             a = 0
                             chei_hod = 'white'
                             Board(1080, 1080).makeaboard()
-                            ya_eblan()
+                            pos_and()
                             acttiveWindoow = ''
                     elif 540 < j < 810 and 50 < l < 120:
                         # Prof(width, height).makeaprofile()
