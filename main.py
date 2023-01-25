@@ -579,7 +579,7 @@ pices = [b_rock2, b_knight, b_bishop, b_queen, b_king, b_bishop2, b_knight2, b_r
          w_rock, w_knight, w_queen, w_king, w_bishop2, w_rock2]
 
 
-def ya_eblan():
+def pos_and():
     for i in pices:
         positions[i.piece_coord[1]][i.piece_coord[0]] = i
     for i in positions:
@@ -649,7 +649,7 @@ if __name__ == '__main__':
                         # asf = pygame.transform.scale(asf, (0, 0))
                         if a == 0:
                             Board(1080, 1080).makeaboard()
-                            ya_eblan()
+                            pos_and()
                             acttiveWindoow = ''
                         else:
                             print(213123131, a)
@@ -747,6 +747,6 @@ if __name__ == '__main__':
                     except:
                         pass
             if a != 1 and acttiveWindoow != 'Menu' and acttiveWindoow != 'endgame':
-                ya_eblan()
+                pos_and()
         pygame.display.update()
     pygame.quit()
